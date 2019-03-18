@@ -349,10 +349,13 @@ namespace GEX
 				for (int i = 0; i < tmppositions.size(); i++) {
 					if (!(std::find(positions.begin(), positions.end(), tmppositions.at(i)) != positions.end()))
 					{
-						rectangle.setFillColor(sf::Color(((*it)->getColor()).r, ((*it)->getColor()).g, ((*it)->getColor()).b, 40));
-						rectangle.setPosition(sf::Vector2f(tmppositions.at(i).x * 16, tmppositions.at(i).y * 16));
-						target_.draw(rectangle);
-						positions.push_back(tmppositions.at(i));
+						if (!(*it)->isExpired())
+						{
+							rectangle.setFillColor(sf::Color(((*it)->getColor()).r, ((*it)->getColor()).g, ((*it)->getColor()).b, 40));
+							rectangle.setPosition(sf::Vector2f(tmppositions.at(i).x * 16, tmppositions.at(i).y * 16));
+							target_.draw(rectangle);
+							positions.push_back(tmppositions.at(i));
+						}
 					}
 				}
 				
@@ -430,7 +433,7 @@ namespace GEX
 	void World::loadTextures()
 	{
 		textures_.load(GEX::TextureID::Jungle,		 "Media/Textures/background.png");
-		textures_.load(GEX::TextureID::PacmanAtlas,  "Media/Textures/pacManAtlas.png");
+		textures_.load(GEX::TextureID::PacmanAtlas,  "Media/Textures/carAtlas.png");
 	}
 
 	//Build the world

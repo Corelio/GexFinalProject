@@ -7,29 +7,29 @@ namespace GEX
 	{
 		std::map<ActorType, ActorData> data;
 
-		JsonFrameParser frames = JsonFrameParser("Media/Textures/pacManAtlas.json");
+		JsonFrameParser frames = JsonFrameParser("Media/Textures/carAtlas.json");
 
 		// All actors must have a dead state otherwise the application will break when the actor is destroyed
 
 		data[ActorType::Car].texture = TextureID::PacmanAtlas;
 						
-		data[ActorType::Car].animations[Actor::State::HorizontalRight].addFrameSet(frames.getFramesFor("red right"));
+		data[ActorType::Car].animations[Actor::State::HorizontalRight].addFrameSet(frames.getFramesFor("hf"));
 		data[ActorType::Car].animations[Actor::State::HorizontalRight].setDuration(sf::Time(sf::seconds(1.f)));
 		data[ActorType::Car].animations[Actor::State::HorizontalRight].setRepeating(true);
 
-		data[ActorType::Car].animations[Actor::State::HorizontalLeft].addFrameSet(frames.getFramesFor("red left"));
+		data[ActorType::Car].animations[Actor::State::HorizontalLeft].addFrameSet(frames.getFramesFor("hr"));
 		data[ActorType::Car].animations[Actor::State::HorizontalLeft].setDuration(sf::Time(sf::seconds(1.f)));
 		data[ActorType::Car].animations[Actor::State::HorizontalLeft].setRepeating(true);
 					
-		data[ActorType::Car].animations[Actor::State::VerticalUp].addFrameSet(frames.getFramesFor("red up"));
+		data[ActorType::Car].animations[Actor::State::VerticalUp].addFrameSet(frames.getFramesFor("up"));
 		data[ActorType::Car].animations[Actor::State::VerticalUp].setDuration(sf::Time(sf::seconds(1.f)));
 		data[ActorType::Car].animations[Actor::State::VerticalUp].setRepeating(true);
 													  
-		data[ActorType::Car].animations[Actor::State::VerticalDown].addFrameSet(frames.getFramesFor("red down"));
+		data[ActorType::Car].animations[Actor::State::VerticalDown].addFrameSet(frames.getFramesFor("dw"));
 		data[ActorType::Car].animations[Actor::State::VerticalDown].setDuration(sf::Time(sf::seconds(1.f)));
 		data[ActorType::Car].animations[Actor::State::VerticalDown].setRepeating(true);
 
-		data[ActorType::Car].animations[Actor::State::Dead].addFrameSet(frames.getFramesFor("die"));
+		data[ActorType::Car].animations[Actor::State::Dead].addFrameSet(frames.getFramesFor("hf"));
 		data[ActorType::Car].animations[Actor::State::Dead].setDuration(sf::Time(sf::seconds(1.f)));
 		data[ActorType::Car].animations[Actor::State::Dead].setRepeating(false);
 
@@ -51,7 +51,7 @@ namespace GEX
 		data[position].deliveryTiles.push_back(sf::Vector2i(8, 5));
 		data[position].deliveryTiles.push_back(sf::Vector2i(9, 5));
 		data[position].deliveryTiles.push_back(sf::Vector2i(10, 5));
-
+		
 		position++;
 
 		data[position].deliveryTiles.push_back(sf::Vector2i(13, 5));
@@ -66,15 +66,15 @@ namespace GEX
 
 		position++;
 
-		data[position].deliveryTiles.push_back(sf::Vector2i(33, 5));
-		data[position].deliveryTiles.push_back(sf::Vector2i(34, 5));
-		data[position].deliveryTiles.push_back(sf::Vector2i(35, 5));
+		data[position].deliveryTiles.push_back(sf::Vector2i(50, 18));
+		data[position].deliveryTiles.push_back(sf::Vector2i(51, 18));
+		data[position].deliveryTiles.push_back(sf::Vector2i(52, 18));
 
 		position++;
 
-		data[position].deliveryTiles.push_back(sf::Vector2i(43, 5));
-		data[position].deliveryTiles.push_back(sf::Vector2i(44, 5));
-		data[position].deliveryTiles.push_back(sf::Vector2i(45, 5));
+		data[position].deliveryTiles.push_back(sf::Vector2i(8, 5));
+		data[position].deliveryTiles.push_back(sf::Vector2i(9, 5));
+		data[position].deliveryTiles.push_back(sf::Vector2i(10, 5));
 
 		return data;
 	}
