@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "TileMap.h"
 #include "Order.h"
+#include "TextNode.h"
 #include <queue>
 #include <list>
 #include <iterator>
@@ -58,6 +59,8 @@ namespace GEX
 		void						drawActionTiles();
 		void						updateBlink(sf::Time dt);
 		void						levelUp();
+		void						clearBlocks();
+		void						addBlocks();
 
 	private:
 		enum Layer
@@ -86,6 +89,7 @@ namespace GEX
 		int							counter_;
 		int							orientation_;
 		mutable Actor*				player_;
+		TextNode*					playerAction_;
 		Actor*						ghost_;
 		SpriteNode*					background_;
 
@@ -95,6 +99,7 @@ namespace GEX
 		sf::Text					livesText_;
 		sf::Text					playerOrdersTitle_;
 		sf::Text					ordersTitle_;
+		sf::Text					extraOrdersText_;
 		std::vector<sf::Text>		playerOrdersText_;
 		std::vector<sf::Text>		ordersText_;
 
@@ -110,6 +115,7 @@ namespace GEX
 		int							blink_;
 		sf::Time					blinkTime_;
 		int							deliveredOrders_;
+		sf::Time					generateOrder_;
 	};
 
 }

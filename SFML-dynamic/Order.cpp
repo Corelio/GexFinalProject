@@ -13,7 +13,7 @@ namespace GEX
 
 	Order::Order(sf::Color color) :
 		color_(color),
-		time_(sf::seconds(0)),
+		time_(sf::seconds(PARAMETERS.at("EXPIRETIME"))),
 		delivery_(sf::seconds(0))
 	{
 		//Create a new order
@@ -29,7 +29,7 @@ namespace GEX
 	{
 		if (!isExpired()) {
 			//update time
-			time_ += dt;
+			time_ -= dt;
 			if (tilePosition != sf::Vector2i(-1, -1))
 			{
 				if (std::find(deliveryTiles_.begin(), deliveryTiles_.end(), tilePosition) != deliveryTiles_.end())
@@ -52,7 +52,7 @@ namespace GEX
 	//Check if order is expired
 	bool Order::isExpired() const
 	{
-		if (time_.asSeconds() > sf::seconds(PARAMETERS.at("EXPIRETIME")).asSeconds())
+		if (time_.asSeconds() <= sf::seconds(0).asSeconds())
 		{
 			return true;
 		}
@@ -63,6 +63,14 @@ namespace GEX
 	bool Order::isDelivered() const
 	{
 		if (delivery_.asSeconds() >= sf::seconds(PARAMETERS.at("PICKUPTIME")).asSeconds()) {
+			return true;
+		}
+		return false;
+	}
+
+	bool Order::isDelivering() const
+	{
+		if (delivery_.asSeconds() > sf::seconds(0).asSeconds()) {
 			return true;
 		}
 		return false;
@@ -85,29 +93,29 @@ namespace GEX
 	{
 		//Only calculate tip for delivered and not expired deliveries
 		if (isDelivered() && !isExpired()) {
-			float percentage = 0.05;
+ 			float percentage = 0.05;
 
-			if (time_.asSeconds() < sf::seconds(PARAMETERS.at("EXPIRETIME")*.065).asSeconds())
+			if (time_.asSeconds() > sf::seconds(PARAMETERS.at("EXPIRETIME")*.9).asSeconds())
 			{
 				percentage = 0.25;
 			}
-			else if (time_.asSeconds() < sf::seconds(PARAMETERS.at("EXPIRETIME")*.125).asSeconds())
+			else if (time_.asSeconds() > sf::seconds(PARAMETERS.at("EXPIRETIME")*.8).asSeconds())
 			{
 				percentage = 0.20;
 			}
-			else if (time_.asSeconds() < sf::seconds(PARAMETERS.at("EXPIRETIME")*.25).asSeconds())
+			else if (time_.asSeconds() > sf::seconds(PARAMETERS.at("EXPIRETIME")*.7).asSeconds())
 			{
 				percentage = 0.15;
 			}
-			else if (time_.asSeconds() < sf::seconds(PARAMETERS.at("EXPIRETIME")*.313).asSeconds())
+			else if (time_.asSeconds() > sf::seconds(PARAMETERS.at("EXPIRETIME")*.6).asSeconds())
 			{
 				percentage = 0.10;
 			}
-			else if (time_.asSeconds() > sf::seconds(PARAMETERS.at("EXPIRETIME")*.375).asSeconds() && time_.asSeconds() < sf::seconds(PARAMETERS.at("EXPIRETIME")/2).asSeconds())
+			else if (time_.asSeconds() >= sf::seconds(PARAMETERS.at("EXPIRETIME")*.5).asSeconds())
 			{
 				percentage = 0.0;
 			}
-			else if (time_.asSeconds() > sf::seconds(PARAMETERS.at("EXPIRETIME")/2).asSeconds())
+			else if (time_.asSeconds() < sf::seconds(PARAMETERS.at("EXPIRETIME")*.5).asSeconds())
 			{
 				//If the delivery time is over 2 min, charge the player the value
 				return -1.0 * value_;

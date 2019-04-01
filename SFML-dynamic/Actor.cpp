@@ -167,7 +167,10 @@ namespace GEX
 	//Draw the Actor
 	void Actor::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
 	{
-		target.draw(sprite_, states);
+		if (tilePosition_.y < MAPY) {
+			target.draw(sprite_, states);
+		}
+		
 	}
 
 	//Updates player position
@@ -217,26 +220,26 @@ namespace GEX
 		//Move up or down
 		if (direction_ == Direction::Up) {
 			tilePosition_.y--;
-			if (tilePosition_.y < -10) {
+			if (tilePosition_.y < -5) {
 				direction_ = Direction::Down;
 			}
 		}
 		else if (direction_ == Direction::Down) {
 			tilePosition_.y++;
-			if (tilePosition_.y > mapSize_.y) {
+			if (tilePosition_.y > mapSize_.y+5) {
 				direction_ = Direction::Up;
 			}
 		}
 		
 		if (direction_ == Direction::Left) {
 			tilePosition_.x--;
-			if (tilePosition_.x < -10) {
+			if (tilePosition_.x < -5) {
 				direction_ = Direction::Right;
 			}
 		}
 		else if (direction_ == Direction::Right) {
 			tilePosition_.x++;
-			if (tilePosition_.x > mapSize_.x+10) {
+			if (tilePosition_.x > mapSize_.x+5) {
 				direction_ = Direction::Left;
 			}
 		}

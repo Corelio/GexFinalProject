@@ -18,7 +18,10 @@ namespace GEX
 	namespace
 	{
 		const std::map<int, PickupData> TABLE = initializePickupData();
+		const std::map<int, BlockData> BLOCK = initializeBlockData();
 		const std::map<std::string, int> PARAMETERS = initializeParametersData();
+		const std::map<int, sf::Color> COLORS = initializeColorData();
+
 	}
 
 	World::World(sf::RenderTarget& outputTarget, SoundPlayer& sounds)
@@ -51,6 +54,9 @@ namespace GEX
 		, blinkTime_(sf::seconds(0))
 		, blink_(0)
 		, deliveredOrders_(0)
+		, extraOrdersText_()
+		, playerAction_()
+		, generateOrder_()
 
 	{
 		sceneTexture_.create(target_.getSize().x, target_.getSize().y);
@@ -67,6 +73,9 @@ namespace GEX
 
 	void World::update(sf::Time dt, CommandQueue& commands)
 	{
+		//remove action text from player
+		playerAction_->setText("");
+
 		// run all commands in the command queue
 		while (!commandQueue_.isEmpty())
 		{
@@ -111,6 +120,14 @@ namespace GEX
 		{
 			livesText_.setFillColor(sf::Color::Red);
 		}
+
+		//Update extra orders at bakery
+		extraOrdersText_.setString("");
+		if (bakeryOrders_.size() > 5) {
+			int extra = bakeryOrders_.size() - 5;
+			extraOrdersText_.setString("+ " + std::to_string(extra));
+		}
+		
 	}
 
 	//Get the view bounds
@@ -144,6 +161,11 @@ namespace GEX
 		Car->setTilePosition(sf::Vector2i(0, 5));
 		Car->setMapSize(sf::Vector2i(MAPX, MAPY));
 		player_ = Car.get();
+		std::unique_ptr<TextNode> action(new TextNode(std::string("")));
+		action->setPosition(0, 11);
+		action->setScale(.7, .7);
+		playerAction_ = action.get();
+		Car->attachChild(std::move(action));
 		sceneLayers_[UpperAir]->attachChild(std::move(Car));
 	}
 
@@ -175,9 +197,13 @@ namespace GEX
 		clearOrderText();
 
 		//Should I create a new order?
-		if (randomInt(player_->getLevel() + 60) < player_->getLevel()) {
+		generateOrder_ += dt;
+		//Orders are generated randomly in an interval of 4 seconds
+		if (generateOrder_.asSeconds() > sf::seconds(4).asSeconds() && randomInt(60) < player_->getLevel()) {
 			//generate a new order and save at the bakery list
 			bakeryOrders_.push_back(new Order());
+			//Restart timer
+			generateOrder_ = sf::seconds(0);
 		}
 
 		//Update bakery orders
@@ -252,9 +278,13 @@ namespace GEX
 	void World::pickup(sf::Time dt)
 	{
 		//Check if player is stoped at the pickup point
-   		if (std::find(pickupTiles_.begin(), pickupTiles_.end(), player_->getTilePosition()) != pickupTiles_.end())
+   		if (
+			playerOrders_.size() < 5 &&
+			bakeryOrders_.size() > 0 &&
+			std::find(pickupTiles_.begin(), pickupTiles_.end(), player_->getTilePosition()) != pickupTiles_.end())
 		{
 			pickupTime_ += dt;
+			playerAction_->setText("Loading...");
 		}
 		else
 		{
@@ -274,6 +304,7 @@ namespace GEX
 
 			for (int i = 0; i < ordersAmount; i++)
 			{
+				bakeryOrders_.front()->setColor(COLORS.at(playerOrders_.size()));
 				playerOrders_.push_back(std::move(bakeryOrders_.front()));
 				bakeryOrders_.pop_front();
 			}
@@ -285,11 +316,19 @@ namespace GEX
 		std::list<Order*>::iterator last = playerOrders_.end();
 		//Check for any delivery
 		for (std::list<Order*>::iterator it = playerOrders_.begin(); it != playerOrders_.end(); it++) {
+			//Update delivering text
+			if ((*it)->isDelivering())
+			{
+				playerAction_->setText("Delivering...");
+			}
+			
+			//If last is not the end of the vector, means that the order should be removed
 			if (last != playerOrders_.end())
 			{
 				playerOrders_.erase(last);
 				last = playerOrders_.end();
 			}
+			//If is deliverd, mark to be erased seting last as the pointer to the order
 			if (!(*it)->isExpired() && (*it)->isDelivered())
 			{
 				player_->addWallet((*it)->getTip());
@@ -384,7 +423,38 @@ namespace GEX
 		if (deliveredOrders_ / PARAMETERS.at("NUMBERORDERSLEVELUP") > player_->getLevel())
 		{
 			player_->levelUp();
+			addBlocks();
 		}
+	}
+
+	void World::clearBlocks()
+	{
+		for (unsigned int i = 0; i < MAPX; ++i)
+			for (unsigned int j = 0; j < MAPY; ++j)
+			{
+				if (mapOverlay_.getTile(i, j) == 219)
+					mapOverlay_.setTile(i, j, -1);
+			}
+	}
+
+	void World::addBlocks()
+	{
+		clearBlocks();
+		std::set<int> positions;
+		while (positions.size() < (player_->getLevel() < 7 ? player_->getLevel()-1 : 7))
+		{
+			int dsd = BLOCK.size();
+			positions.insert(randomInt(BLOCK.size()));
+		}
+		for (auto it = positions.begin(); it != positions.end(); it++)
+		{
+			auto blocks = BLOCK.at(*it).blockTiles;
+			for (auto b : blocks)
+			{
+				mapOverlay_.setTile(b.x, b.y, 219);
+			}
+		}
+		
 	}
 
 	//Draw the world
@@ -392,10 +462,9 @@ namespace GEX
 	{
 			target_.clear(sf::Color::Black);
 			target_.setView(worldView_);
-			map_.reload();
 			tileMap_.load(&map_, MAPX, MAPY);
 			target_.draw(tileMap_);
-			mapOverlay_.reload();
+			//mapOverlay_.reload();
 			tileMap_.load(&mapOverlay_, MAPX, MAPY);
 			target_.draw(tileMap_);
 			target_.draw(sceneGraph_);
@@ -403,6 +472,7 @@ namespace GEX
 			target_.draw(livesText_);
 			target_.draw(playerOrdersTitle_);
 			target_.draw(ordersTitle_);
+			target_.draw(extraOrdersText_);
 			drawOrderText();
 			drawActionTiles();
 	}
@@ -494,5 +564,12 @@ namespace GEX
 			tmp.setPosition(1270.0f, y);
 			ordersText_.push_back(tmp);
 		}
+
+		//Display extra orders at bakery
+		extraOrdersText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
+		extraOrdersText_.setPosition(1380.0f, 875.0f);
+		extraOrdersText_.setCharacterSize(18.0f);
+		extraOrdersText_.setFillColor(sf::Color::Yellow);
+		extraOrdersText_.setString("");
 	}
 }
