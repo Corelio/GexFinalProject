@@ -85,8 +85,7 @@ namespace GEX
 		// All scene nodes should be updated
 		sceneGraph_.update(dt, commands);
 
-		// Check if there are any enemy inside of the battlefield and spawn it
-		//updateSound();
+		updateSound();
 
 		//Update orders
 		updateOrders(dt);
@@ -202,6 +201,8 @@ namespace GEX
 		if (generateOrder_.asSeconds() > sf::seconds(4).asSeconds() && randomInt(60) < player_->getLevel()) {
 			//generate a new order and save at the bakery list
 			bakeryOrders_.push_back(new Order());
+			//Play Sound
+			player_->playLocalSound(commandQueue_, SoundEffectID::New);
 			//Restart timer
 			generateOrder_ = sf::seconds(0);
 		}
@@ -331,6 +332,14 @@ namespace GEX
 			//If is deliverd, mark to be erased seting last as the pointer to the order
 			if (!(*it)->isExpired() && (*it)->isDelivered())
 			{
+				if ((*it)->getTip() > 0) {
+					//Play Sound
+					player_->playLocalSound(commandQueue_, SoundEffectID::Money);
+				}
+				else {
+					//Play Sound
+					player_->playLocalSound(commandQueue_, SoundEffectID::Error);
+				}
 				player_->addWallet((*it)->getTip());
 				deliveredOrders_++;
 				last = it;
@@ -464,7 +473,13 @@ namespace GEX
 			target_.setView(worldView_);
 			tileMap_.load(&map_, MAPX, MAPY);
 			target_.draw(tileMap_);
-			//mapOverlay_.reload();
+			try {
+				mapOverlay_.reload();
+			}
+			catch(std::exception e) {
+
+			}
+			
 			tileMap_.load(&mapOverlay_, MAPX, MAPY);
 			target_.draw(tileMap_);
 			target_.draw(sceneGraph_);
@@ -517,6 +532,10 @@ namespace GEX
 			sceneLayers_.push_back(layer.get());
 			sceneGraph_.attachChild(std::move(layer));
 		}
+
+		// Sound Effects
+		std::unique_ptr<SoundNode> sNode(new SoundNode(sounds_));
+		sceneGraph_.attachChild(std::move(sNode));
 
 		// Adding Characters
 

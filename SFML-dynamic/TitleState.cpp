@@ -19,7 +19,7 @@ TitleState::TitleState(GEX::StateStack& stack, Context context)
 
 	text_.setPosition(context.window_->getView().getSize() / 2.f);
 
-	//context.music_->play(GEX::MusicID::MenuTheme);
+	context.music_->play(GEX::MusicID::Game);
 }
 
 //Draw the background and text

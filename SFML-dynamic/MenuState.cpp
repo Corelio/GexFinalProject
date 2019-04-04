@@ -31,7 +31,7 @@ MenuState::MenuState(GEX::StateStack& stack, Context context)
 
 	updateOptionText();
 
-	//context.music_->play(GEX::MusicID::MenuTheme);
+	context.music_->play(GEX::MusicID::Game);
 }
 
 void MenuState::draw()

@@ -31,6 +31,7 @@ namespace GEX
 	{
 		MenuTheme,
 		MissionTheme,
+		Game,
 	};
 
 	enum class SoundEffectID
@@ -42,5 +43,9 @@ namespace GEX
 		LaunchMissile,
 		CollectPickup,
 		Button,
+		New,
+		Delivery,
+		Money,
+		Error,
 	};
 }

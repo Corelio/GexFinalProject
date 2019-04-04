@@ -5,7 +5,7 @@ GameState::GameState(GEX::StateStack& stack, Context context)
 	, world_(*context.window_, *context.sound_)
 	, player_(*context.player_)
 {
-	//context.music_->play(GEX::MusicID::MissionTheme);
+	context.music_->stop();
 }
 
 //Draw the world

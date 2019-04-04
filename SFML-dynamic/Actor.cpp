@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <iostream>
+#include "CommandQueue.h"
 
 namespace GEX
 {
@@ -406,6 +407,17 @@ namespace GEX
 	void Actor::levelUp()
 	{
 		level_++;
+	}
+
+	void Actor::playLocalSound(CommandQueue & commands, SoundEffectID effect)
+	{
+		Command playSoundCommand;
+		playSoundCommand.category = Category::SoundEffect;
+		playSoundCommand.action = derivedAction<SoundNode>(
+			std::bind(&SoundNode::playSound, std::placeholders::_1, effect, getWorldPosition())
+			);
+
+		commands.push(playSoundCommand);
 	}
 
 

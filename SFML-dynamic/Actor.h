@@ -5,6 +5,7 @@
 #include "Command.h"
 #include "Animation2.h"
 #include "Map.h"
+#include "SoundNode.h"
 
 namespace GEX
 {
@@ -52,6 +53,7 @@ namespace GEX
 		void									addWallet(float money);
 		int										getLevel() const;
 		void									levelUp();
+		void									playLocalSound(CommandQueue& commands, SoundEffectID effect);
 
 	private:
 		void									updateStates(sf::Time dt);
