@@ -4,22 +4,9 @@ namespace GEX
 {
 	enum class TextureID
 	{
-		Landscape,
-		Space,
+		CarAtlas,
 		TitleScreen,
 		Face,
-		Entities,
-		Jungle,
-		Explosion,
-		Particle,
-		FinishLine,
-		Mushroom,
-		Hero2,
-		Zombie1,
-		Zombie2,
-		Zombie3,
-		Atlas,
-		PacmanAtlas,
 	};
 
 	enum class FontID
@@ -29,23 +16,18 @@ namespace GEX
 
 	enum class MusicID
 	{
-		MenuTheme,
-		MissionTheme,
 		Game,
 	};
 
 	enum class SoundEffectID
 	{
-		AlliedGunfire,
-		EnemyGunfire,
-		Explosion1,
-		Explosion2,
-		LaunchMissile,
-		CollectPickup,
-		Button,
 		New,
 		Delivery,
 		Money,
 		Error,
+		Levelup,
+		Go,
+		No,
+
 	};
 }

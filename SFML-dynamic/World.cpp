@@ -57,6 +57,7 @@ namespace GEX
 		, extraOrdersText_()
 		, playerAction_()
 		, generateOrder_()
+		, ordersAmountText_()
 
 	{
 		sceneTexture_.create(target_.getSize().x, target_.getSize().y);
@@ -69,6 +70,7 @@ namespace GEX
 
 		// Build the world
 		buildScene();
+	
 	}
 
 	void World::update(sf::Time dt, CommandQueue& commands)
@@ -112,6 +114,7 @@ namespace GEX
 		//Update texts
 		scoreText_.setString("Level: " + std::to_string(player_->getLevel()));
 		livesText_.setString("Wallet: $" + player_->getFormatedWallet());
+		ordersAmountText_.setString("Delivered Orders: " + std::to_string(deliveredOrders_));
 
 		//change color for the last $50 ;)
 		livesText_.setFillColor(sf::Color::White);
@@ -247,7 +250,7 @@ namespace GEX
 			}
 			else
 			{
-				playerOrdersText_.at(counter).setString("$" + formatValue((*it)->getValue()) + " - " + formatTime((*it)->getTime()));
+				playerOrdersText_.at(counter).setString("$" + formatValue((*it)->getValue()) + " - " + formatTime((*it)->getTime()) + " - tip: $ " + formatValue((*it)->getTip()));
 			}
 			playerOrdersText_.at(counter).setFillColor((*it)->getColor());
 			if (++counter == 5) {
@@ -285,7 +288,7 @@ namespace GEX
 			std::find(pickupTiles_.begin(), pickupTiles_.end(), player_->getTilePosition()) != pickupTiles_.end())
 		{
 			pickupTime_ += dt;
-			playerAction_->setText("Loading...");
+			playerAction_->setText("Picking up...");
 		}
 		else
 		{
@@ -309,6 +312,8 @@ namespace GEX
 				playerOrders_.push_back(std::move(bakeryOrders_.front()));
 				bakeryOrders_.pop_front();
 			}
+
+			player_->playLocalSound(commandQueue_, SoundEffectID::Go);
 		}
 	}
 
@@ -332,11 +337,14 @@ namespace GEX
 			//If is deliverd, mark to be erased seting last as the pointer to the order
 			if (!(*it)->isExpired() && (*it)->isDelivered())
 			{
-				if ((*it)->getTip() > 0) {
+				if ((*it)->getTip() == 0) {
+					//Play Sound
+					player_->playLocalSound(commandQueue_, SoundEffectID::No);
+				}else if ((*it)->getTip() > 0) {
 					//Play Sound
 					player_->playLocalSound(commandQueue_, SoundEffectID::Money);
 				}
-				else {
+				else if ((*it)->getTip() < 0) {
 					//Play Sound
 					player_->playLocalSound(commandQueue_, SoundEffectID::Error);
 				}
@@ -429,8 +437,9 @@ namespace GEX
 
 	void World::levelUp()
 	{
-		if (deliveredOrders_ / PARAMETERS.at("NUMBERORDERSLEVELUP") > player_->getLevel())
+		if ((float)deliveredOrders_ / PARAMETERS.at("NUMBERORDERSLEVELUP") > player_->getLevel())
 		{
+			player_->playLocalSound(commandQueue_, SoundEffectID::Levelup);
 			player_->levelUp();
 			addBlocks();
 		}
@@ -474,7 +483,7 @@ namespace GEX
 			tileMap_.load(&map_, MAPX, MAPY);
 			target_.draw(tileMap_);
 			try {
-				mapOverlay_.reload();
+				//mapOverlay_.reload();
 			}
 			catch(std::exception e) {
 
@@ -488,6 +497,7 @@ namespace GEX
 			target_.draw(playerOrdersTitle_);
 			target_.draw(ordersTitle_);
 			target_.draw(extraOrdersText_);
+			target_.draw(ordersAmountText_);
 			drawOrderText();
 			drawActionTiles();
 	}
@@ -517,8 +527,7 @@ namespace GEX
 	//Load textures
 	void World::loadTextures()
 	{
-		textures_.load(GEX::TextureID::Jungle,		 "Media/Textures/background.png");
-		textures_.load(GEX::TextureID::PacmanAtlas,  "Media/Textures/carAtlas.png");
+		textures_.load(GEX::TextureID::CarAtlas,  "Media/Textures/carAtlas.png");
 	}
 
 	//Build the world
@@ -547,6 +556,12 @@ namespace GEX
 		scoreText_.setCharacterSize(25.0f);
 		scoreText_.setString("Level: " + std::to_string(player_->getLevel()));
 
+		ordersAmountText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
+		ordersAmountText_.setPosition(300.0f, 860.0f);
+		ordersAmountText_.setFillColor(sf::Color::White);
+		ordersAmountText_.setCharacterSize(25.0f);
+		ordersAmountText_.setString("Delivered Orders: " + std::to_string(deliveredOrders_));
+		
 		livesText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
 		livesText_.setPosition(5.0f, 860.0f);
 		livesText_.setCharacterSize(25.0f);

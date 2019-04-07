@@ -20,17 +20,14 @@ namespace GEX
 		, sounds_()
 		, volume_(100)
 	{
-		loadBuffer(SoundEffectID::AlliedGunfire, "Media/Sound/AlliedGunfire.wav");
-		loadBuffer(SoundEffectID::EnemyGunfire, "Media/Sound/EnemyGunfire.wav");
-		loadBuffer(SoundEffectID::Explosion1, "Media/Sound/Explosion1.wav");
-		loadBuffer(SoundEffectID::Explosion2, "Media/Sound/Explosion2.wav");
-		loadBuffer(SoundEffectID::LaunchMissile, "Media/Sound/LaunchMissile.wav");
-		loadBuffer(SoundEffectID::CollectPickup, "Media/Sound/CollectPickup.wav");
-		loadBuffer(SoundEffectID::Button, "Media/Sound/Button.wav");
-		loadBuffer(SoundEffectID::New, "Media/Sound/new.wav");
+		loadBuffer(SoundEffectID::New, "Media/Sound/Call-bell-ding.wav");
 		loadBuffer(SoundEffectID::Delivery, "Media/Sound/delivery.wav");
 		loadBuffer(SoundEffectID::Money, "Media/Sound/money.wav");
 		loadBuffer(SoundEffectID::Error, "Media/Sound/error.wav");
+		loadBuffer(SoundEffectID::Levelup, "Media/Sound/cheering.wav");
+		loadBuffer(SoundEffectID::Go, "Media/Sound/go.wav");
+		loadBuffer(SoundEffectID::No, "Media/Sound/no.wav");
+
 
 		// Listener points towards the screen (default in SFML)
 		sf::Listener::setDirection(0.f, 0.f, -1.f);

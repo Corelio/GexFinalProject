@@ -11,7 +11,7 @@ namespace GEX
 
 		// All actors must have a dead state otherwise the application will break when the actor is destroyed
 
-		data[ActorType::Car].texture = TextureID::PacmanAtlas;
+		data[ActorType::Car].texture = TextureID::CarAtlas;
 						
 		data[ActorType::Car].animations[Actor::State::HorizontalRight].addFrameSet(frames.getFramesFor("hf"));
 		data[ActorType::Car].animations[Actor::State::HorizontalRight].setDuration(sf::Time(sf::seconds(1.f)));
@@ -40,7 +40,6 @@ namespace GEX
 
 		return data;
 	}
-
 
 	std::map<int, DeliveryData > initializeDeliveryData()
 	{
@@ -513,7 +512,7 @@ namespace GEX
 
 		data["EXPIRETIME"] = 240;
 		data["PICKUPTIME"] = 3;
-		data["NUMBERORDERSLEVELUP"] = 2;
+		data["NUMBERORDERSLEVELUP"] = 20;
 		data["WALLET"] = 1000;
 
 		return data;

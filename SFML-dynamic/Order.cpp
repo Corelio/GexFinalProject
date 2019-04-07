@@ -91,8 +91,8 @@ namespace GEX
 	//Calculate order tip
 	float Order::getTip() const
 	{
-		//Only calculate tip for delivered and not expired deliveries
-		if (isDelivered() && !isExpired()) {
+		//Only calculate tip not expired deliveries
+		if (!isExpired()) {
  			float percentage = 0.05;
 
 			if (time_.asSeconds() > sf::seconds(PARAMETERS.at("EXPIRETIME")*.9).asSeconds())
@@ -117,7 +117,7 @@ namespace GEX
 			}
 			else if (time_.asSeconds() < sf::seconds(PARAMETERS.at("EXPIRETIME")*.5).asSeconds())
 			{
-				//If the delivery time is over 2 min, charge the player the value
+				//If the delivery time is over 1/2 of the delivery time, charge the player the value
 				return -1.0 * value_;
 			}
 

@@ -39,12 +39,6 @@ namespace GEX
 		void									setTilePosition(sf::Vector2i position);
 		sf::Vector2i							getTilePosition() const;
 		bool									isMarkedForRemoval() const override;
-		bool									hasPower() const;
-		void									addPower();
-		void									removePower();
-		void									shouldBeAffraid(bool beAffraid);
-		void									setAffraidElapsedTime(sf::Time affraidElapsedTime);
-		sf::Time								getElapsedPowerTime();
 		
 		void									setTileSize(sf::Vector2u tileSize);
 		void									setMapSize(sf::Vector2i mapSize);
@@ -83,16 +77,6 @@ namespace GEX
 
 		Map*			                        map_;
 		Map*									mapOverlay_;
-
-		float									travelDistance_;
-		std::size_t								directionIndex_;
-		bool									power_;
-		sf::Time								elapsedPowerTime_;
-		bool									shouldBeAffraid_;
-		sf::Time								affraidElapsedTime_;
-		sf::Time								powerCherryBlinkTime_;
-		bool									blinkState_;
-		float									totalPowerTime_;
 
 	};
 }

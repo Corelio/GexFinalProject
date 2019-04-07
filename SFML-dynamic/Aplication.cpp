@@ -9,7 +9,7 @@
 #include "FontManager.h"
 
 //Update timeframe
-const sf::Time Aplication::TimePerFrame = sf::seconds(1.0f / 15.0f);
+const sf::Time Aplication::TimePerFrame = sf::seconds(1.0f / 12.0f);
 
 Aplication::Aplication()
 	: window_(sf::VideoMode(1600, 900), "Sticky Bun Fever")

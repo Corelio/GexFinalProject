@@ -97,6 +97,7 @@ namespace GEX
 
 		sf::Text					scoreText_;
 		sf::Text					livesText_;
+		sf::Text					ordersAmountText_;
 		sf::Text					playerOrdersTitle_;
 		sf::Text					ordersTitle_;
 		sf::Text					extraOrdersText_;

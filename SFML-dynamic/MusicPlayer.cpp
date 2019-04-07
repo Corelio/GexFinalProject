@@ -7,8 +7,6 @@ namespace GEX {
 		, filenames_()
 		, volume_(100)
 	{
-		filenames_[MusicID::MissionTheme] = "Media/Music/PacmanWakaWaka04.wav";
-		filenames_[MusicID::MenuTheme]    = "Media/Music/Pac-Man-Theme-Song.ogg";
 		filenames_[MusicID::Game] = "Media/Music/game.wav";
 	}
 

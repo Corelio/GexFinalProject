@@ -27,14 +27,6 @@ namespace GEX
 		, state_(State::HorizontalRight)
 		, sprite_(textures.get(TABLE.at(type).texture))
 		, direction_(Direction::Right)
-		, travelDistance_(0.f)
-		, directionIndex_(0)
-		, power_(false)
-		, elapsedPowerTime_(sf::seconds(4.f))
-		, shouldBeAffraid_(false)
-		, powerCherryBlinkTime_(sf::Time::Zero)
-		, blinkState_(true)
-		, totalPowerTime_(6.f)
 		, tilePosition_(0, 5)
 		, newDirection_(Direction::None)
 		, wallet_(PARAMETERS.at("WALLET"))
@@ -190,6 +182,7 @@ namespace GEX
 					{
 						if (!isOppositeDirection())
 						{
+							//Assign new direction
 							direction_ = newDirection_;
 						}
 					}
@@ -221,27 +214,31 @@ namespace GEX
 		//Move up or down
 		if (direction_ == Direction::Up) {
 			tilePosition_.y--;
-			if (tilePosition_.y < -5) {
-				direction_ = Direction::Down;
+			if (tilePosition_.y < -2) {
+				//direction_ = Direction::Down;
+				tilePosition_.y = MAPY + 1;
 			}
 		}
 		else if (direction_ == Direction::Down) {
 			tilePosition_.y++;
-			if (tilePosition_.y > mapSize_.y+5) {
-				direction_ = Direction::Up;
+			if (tilePosition_.y > mapSize_.y+2) {
+				//direction_ = Direction::Up;
+				tilePosition_.y = -1;
 			}
 		}
 		
 		if (direction_ == Direction::Left) {
 			tilePosition_.x--;
-			if (tilePosition_.x < -5) {
-				direction_ = Direction::Right;
+			if (tilePosition_.x < -2) {
+				//direction_ = Direction::Right;
+				tilePosition_.x = MAPX + 1;
 			}
 		}
 		else if (direction_ == Direction::Right) {
 			tilePosition_.x++;
-			if (tilePosition_.x > mapSize_.x+5) {
-				direction_ = Direction::Left;
+			if (tilePosition_.x > mapSize_.x+2) {
+				//direction_ = Direction::Left;
+				tilePosition_.x = -1;
 			}
 		}
 		float x = tileSize_.x * tilePosition_.x + 0.5*tileSize_.x;
@@ -252,6 +249,11 @@ namespace GEX
 	bool Actor::checkMovement()
 	{
 		sf::Vector2i tmpPosition(tilePosition_);
+		//Should not move if it is out of the screen or on the edge of the screen
+		if (tmpPosition.x < 0 || tmpPosition.y < 0 || tmpPosition.x > MAPX || tmpPosition.y > MAPY)
+		{
+			newDirection_ = Direction::None;
+		}
 		if (newDirection_ == Direction::Left) {
 			tmpPosition.x--;
 		}
@@ -332,44 +334,6 @@ namespace GEX
 	bool Actor::isMarkedForRemoval() const
 	{
 		return wallet_ < 0; 
-	}
-
-	// Return the power state of the actor
-	bool Actor::hasPower() const
-	{
-		return power_;
-	}
-
-	// Adds power to the actor also starts the elapsed countdown to remove the power
-	void Actor::addPower()
-	{
-		power_ = true;
-		elapsedPowerTime_ = sf::seconds(totalPowerTime_);
-	}
-
-	// Removes the power of the Actor and sets the elapsed power time to Zero
-	void Actor::removePower()
-	{
-		power_ = false;
-		elapsedPowerTime_ = sf::Time::Zero;
-	}
-
-	// Return if the actor should be affraid of the other actors
-	void Actor::shouldBeAffraid(bool beAffraid)
-	{
-		shouldBeAffraid_ = beAffraid;
-	}
-
-	// Set the amount of time remaining for the affraid mode
-	void Actor::setAffraidElapsedTime(sf::Time affraidElapsedTime)
-	{
-		affraidElapsedTime_ = affraidElapsedTime;
-	}
-
-	// Return the time remaining for the Power
-	sf::Time Actor::getElapsedPowerTime()
-	{
-		return elapsedPowerTime_;
 	}
 
 	void Actor::setTileSize(sf::Vector2u tileSize)
