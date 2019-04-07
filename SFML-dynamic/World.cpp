@@ -1,3 +1,34 @@
+/**
+* @file
+* World.cpp
+* @author
+* Marco Corsini Baccaro 2019
+* @version 1.0
+*
+* @section DESCRIPTION
+* Game Experience Development Course
+* Class of 2018-2019 
+* Final Project
+*
+* @section LICENSE
+*
+* Copyright 2019
+* Permission to use, copy, modify, and/or distribute this software for
+* any purpose with or without fee is hereby granted, provided that the
+* above copyright notice and this permission notice appear in all copies.
+*
+* THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+* WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+* MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+* ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+* WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+* ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+* OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*
+* @section Academic Integrity
+* I certify that this work is solely my own and complies with
+* NBCC Academic Integrity Policy (policy 1111)
+*/
 #include "World.h"
 #include <set>
 #include <memory>
@@ -376,6 +407,7 @@ namespace GEX
 		return true;
 	}
 
+	//Draw tiles that player must interact in order to play the game
 	void World::drawActionTiles()
 	{
 		if (!blink_) {
@@ -387,10 +419,14 @@ namespace GEX
 		//Draw pickups tile
 		if (bakeryOrders_.size() > 0)
 		{
-			rectangle.setFillColor(sf::Color(sf::Color::White.r, sf::Color::White.g, sf::Color::White.b, 60));
+			rectangle.setFillColor(sf::Color(sf::Color::White.r, sf::Color::White.g, sf::Color::White.b, 80));
 			for (int i = 0; i < pickupTiles_.size(); i++)
 			{
+				rectangle.setPosition(sf::Vector2f(pickupTiles_.at(i).x * 16, (pickupTiles_.at(i).y -1) * 16));
+				target_.draw(rectangle);
 				rectangle.setPosition(sf::Vector2f(pickupTiles_.at(i).x * 16, pickupTiles_.at(i).y * 16));
+				target_.draw(rectangle);
+				rectangle.setPosition(sf::Vector2f(pickupTiles_.at(i).x * 16, (pickupTiles_.at(i).y + 1) * 16));
 				target_.draw(rectangle);
 			}
 		}
@@ -408,7 +444,11 @@ namespace GEX
 						if (!(*it)->isExpired())
 						{
 							rectangle.setFillColor(sf::Color(((*it)->getColor()).r, ((*it)->getColor()).g, ((*it)->getColor()).b, 40));
+							rectangle.setPosition(sf::Vector2f(tmppositions.at(i).x * 16, (tmppositions.at(i).y -1) * 16));
+							target_.draw(rectangle);
 							rectangle.setPosition(sf::Vector2f(tmppositions.at(i).x * 16, tmppositions.at(i).y * 16));
+							target_.draw(rectangle);
+							rectangle.setPosition(sf::Vector2f(tmppositions.at(i).x * 16, (tmppositions.at(i).y + 1) * 16));
 							target_.draw(rectangle);
 							positions.push_back(tmppositions.at(i));
 						}
@@ -419,6 +459,7 @@ namespace GEX
 		}
 	}
 
+	//Update blink tiles
 	void World::updateBlink(sf::Time dt)
 	{
 		blinkTime_ += dt;
@@ -435,6 +476,7 @@ namespace GEX
 		}
 	}
 
+	//Check and level up player
 	void World::levelUp()
 	{
 		if ((float)deliveredOrders_ / PARAMETERS.at("NUMBERORDERSLEVELUP") > player_->getLevel())
@@ -445,6 +487,7 @@ namespace GEX
 		}
 	}
 
+	//Clear existent street blocks
 	void World::clearBlocks()
 	{
 		for (unsigned int i = 0; i < MAPX; ++i)
@@ -455,6 +498,7 @@ namespace GEX
 			}
 	}
 
+	//Check and add blocks if necessary
 	void World::addBlocks()
 	{
 		clearBlocks();
@@ -482,13 +526,6 @@ namespace GEX
 			target_.setView(worldView_);
 			tileMap_.load(&map_, MAPX, MAPY);
 			target_.draw(tileMap_);
-			try {
-				//mapOverlay_.reload();
-			}
-			catch(std::exception e) {
-
-			}
-			
 			tileMap_.load(&mapOverlay_, MAPX, MAPY);
 			target_.draw(tileMap_);
 			target_.draw(sceneGraph_);
@@ -508,11 +545,7 @@ namespace GEX
 		return commandQueue_;
 	}
 
-	/*
-	Check if the player is dead 
-	if player is dead, lose one live and respawn the player
-	if player does not have any lives left, end the game
-	*/
+	//Check if the player is dead 
 	bool World::hasAlivePlayer()
 	{
 
